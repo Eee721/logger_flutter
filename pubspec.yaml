@@ -16,5 +16,5 @@ dependencies:
     git:
       url: https://github.com/Eee721/logger.git
       path: .
-      ref: 7e510ec1cb38ddf7812262ff1031e728194139cc
+      ref: ce9af5620a39c7d643d0d71cf2c24c6c1648869e
   sensors: ^0.4.0+1
