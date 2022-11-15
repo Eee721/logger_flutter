@@ -37,11 +37,17 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: LogConsoleOnShake(
-          dark: true,
-          child: Center(
-            child: Text("Shake Phone to open Console."),
-          ),
+        body: TextButton(
+          child: Text("click"),
+          onPressed: (){
+            showDialog<void>(
+              context: context,
+              barrierDismissible: true, // false = user must tap button, true = tap outside dialog
+              builder: (BuildContext dialogContext) {
+                return LogConsole(dark: true, showCloseButton: true);
+              },
+            );
+          },
         ),
       ),
     );

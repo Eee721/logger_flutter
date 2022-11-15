@@ -11,5 +11,10 @@ dependencies:
   flutter:
     sdk: flutter
 
-  logger: ">=0.7.0"
+#  logger: ">=0.7.0"
+  logger:
+    git:
+      url: https://github.com/Eee721/logger.git
+      path: .
+      ref: 7e510ec1cb38ddf7812262ff1031e728194139cc
   sensors: ^0.4.0+1

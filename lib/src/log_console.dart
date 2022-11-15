@@ -1,27 +1,52 @@
 part of logger_flutter;
 
-ListQueue<OutputEvent> _outputEventBuffer = ListQueue();
-int _bufferSize = 20;
-bool _initialized = false;
+// ListQueue<OutputEvent> _outputEventBuffer = ListQueue();
+// int _bufferSize = 20;
+// bool _initialized = false;
 
+class OutPutListener implements LogOutput {
+  ListQueue<OutputEvent> outputEventBuffer = ListQueue();
+  int bufferSize = 64;
+  OutPutListener(int iBufferSize){
+    bufferSize = iBufferSize;
+  }
+  @override
+  void destroy() {
+    // TODO: implement destroy
+  }
+
+  @override
+  void init() {
+    // TODO: implement init
+  }
+
+  @override
+  void output(OutputEvent event) {
+    if (outputEventBuffer.length >= bufferSize) {
+      outputEventBuffer.removeFirst();
+    }
+    outputEventBuffer.add(event);
+  }
+
+}
 class LogConsole extends StatefulWidget {
   final bool dark;
   final bool showCloseButton;
 
-  LogConsole({this.dark = false, this.showCloseButton = false})
-      : assert(_initialized, "Please call LogConsole.init() first.");
-
-  static void init({int bufferSize = 20}) {
-    if (_initialized) return;
-
-    _bufferSize = bufferSize;
-    _initialized = true;
-    Logger.addOutputListener((e) {
-      if (_outputEventBuffer.length == bufferSize) {
-        _outputEventBuffer.removeFirst();
-      }
-      _outputEventBuffer.add(e);
-    });
+  LogConsole({this.dark = false, this.showCloseButton = false});
+  static OutPutListener opl = OutPutListener(64);
+  static void reset({int bufferSize = 64}) {
+    opl = OutPutListener(bufferSize);
+    // if (_initialized) return;
+    //
+    // _bufferSize = bufferSize;
+    // _initialized = true;
+    // Logger.addOutputListener((e) {
+    //   if (_outputEventBuffer.length == bufferSize) {
+    //     _outputEventBuffer.removeFirst();
+    //   }
+    //   _outputEventBuffer.add(e);
+    // });
   }
 
   @override
@@ -57,16 +82,16 @@ class _LogConsoleState extends State<LogConsole> {
   void initState() {
     super.initState();
 
-    _callback = (e) {
-      if (_renderedBuffer.length == _bufferSize) {
-        _renderedBuffer.removeFirst();
-      }
-
-      _renderedBuffer.add(_renderEvent(e));
-      _refreshFilter();
-    };
-
-    Logger.addOutputListener(_callback);
+    // _callback = (e) {
+    //   if (_renderedBuffer.length == LogConsole.opl.bufferSize) {
+    //     _renderedBuffer.removeFirst();
+    //   }
+    //
+    //   _renderedBuffer.add(_renderEvent(e));
+    //   _refreshFilter();
+    // };
+    //
+    // Logger.addOutputListener(_callback);
 
     _scrollController.addListener(() {
       if (!_scrollListenerEnabled) return;
@@ -82,10 +107,10 @@ class _LogConsoleState extends State<LogConsole> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    _renderedBuffer.clear();
-    for (var event in _outputEventBuffer) {
-      _renderedBuffer.add(_renderEvent(event));
-    }
+    // _renderedBuffer.clear();
+    // for (var event in _outputEventBuffer) {
+    //   _renderedBuffer.add(_renderEvent(event));
+    // }
     _refreshFilter();
   }
 
@@ -112,6 +137,15 @@ class _LogConsoleState extends State<LogConsole> {
 
   @override
   Widget build(BuildContext context) {
+    _renderedBuffer.clear();
+    // for (var event in _outputEventBuffer) {
+    //   _renderedBuffer.add(_renderEvent(event));
+    // }
+    LogConsole.opl.outputEventBuffer.forEach((element) {
+      _renderedBuffer.add(_renderEvent(element));
+    });
+    _refreshFilter();
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: widget.dark
@@ -310,7 +344,7 @@ class _LogConsoleState extends State<LogConsole> {
 
   @override
   void dispose() {
-    Logger.removeOutputListener(_callback);
+    // Logger.removeOutputListener(_callback);
     super.dispose();
   }
 }
