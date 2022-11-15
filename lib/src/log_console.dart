@@ -32,22 +32,22 @@ class OutPutListener implements LogOutput {
 class LogConsole extends StatefulWidget {
   final bool dark;
   final bool showCloseButton;
-
-  LogConsole({this.dark = false, this.showCloseButton = false});
-  static OutPutListener opl = OutPutListener(64);
-  static void reset({int bufferSize = 64}) {
-    opl = OutPutListener(bufferSize);
-    // if (_initialized) return;
-    //
-    // _bufferSize = bufferSize;
-    // _initialized = true;
-    // Logger.addOutputListener((e) {
-    //   if (_outputEventBuffer.length == bufferSize) {
-    //     _outputEventBuffer.removeFirst();
-    //   }
-    //   _outputEventBuffer.add(e);
-    // });
-  }
+  final Logger logger;
+  LogConsole({this.logger,  this.dark = false, this.showCloseButton = false});
+  // static OutPutListener opl = OutPutListener(64);
+  // static void reset({int bufferSize = 64}) {
+  //   opl = OutPutListener(bufferSize);
+  //   // if (_initialized) return;
+  //   //
+  //   // _bufferSize = bufferSize;
+  //   // _initialized = true;
+  //   // Logger.addOutputListener((e) {
+  //   //   if (_outputEventBuffer.length == bufferSize) {
+  //   //     _outputEventBuffer.removeFirst();
+  //   //   }
+  //   //   _outputEventBuffer.add(e);
+  //   // });
+  // }
 
   @override
   _LogConsoleState createState() => _LogConsoleState();
@@ -141,7 +141,7 @@ class _LogConsoleState extends State<LogConsole> {
     // for (var event in _outputEventBuffer) {
     //   _renderedBuffer.add(_renderEvent(event));
     // }
-    LogConsole.opl.outputEventBuffer.forEach((element) {
+    (widget.logger.output as OutPutListener).outputEventBuffer.forEach((element) {
       _renderedBuffer.add(_renderEvent(element));
     });
     _refreshFilter();
